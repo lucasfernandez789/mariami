@@ -1,0 +1,34 @@
+const Appointment = require('../models/Appointment');
+
+// Obtener todos los turnos
+exports.getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find().populate('user', 'name email');
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Crear un nuevo turno
+exports.createAppointment = async (req, res) => {
+  try {
+    const { user, date, service } = req.body;
+    const appointment = new Appointment({ user, date, service });
+    await appointment.save();
+    res.status(201).json(appointment);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Eliminar un turno por ID
+exports.deleteAppointment = async (req, res) => {
+  try {
+    const deleted = await Appointment.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Turno no encontrado' });
+    res.json({ message: 'Turno eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

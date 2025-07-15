@@ -1,0 +1,13 @@
+# Archivos de entorno
+.env
+
+# Node.js
+node_modules/
+
+# Logs
+*.log
+
+# IDEs / editores
+.vscode/
+.idea/
+.DS_Store
