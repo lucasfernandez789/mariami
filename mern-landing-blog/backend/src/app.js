@@ -24,4 +24,11 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use('/api/blog', blogRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/users', userRoutes);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
+});
+
 module.exports = app;
