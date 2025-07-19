@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const userController = require('../controllers/userController');
+const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
-router.post('/', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const user = new User({ name, email, password });
-    await user.save();
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// Rutas públicas
+router.post('/register', userController.register);
+router.post('/login', userController.login);
+
+// Rutas protegidas
+router.get('/profile', authMiddleware, userController.getProfile);
+router.put('/profile', authMiddleware, userController.updateProfile);
+
+// Rutas de admin
+router.get('/', authMiddleware, adminMiddleware, userController.getAllUsers);
 
 module.exports = router;

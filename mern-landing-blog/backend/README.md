@@ -1,84 +1,150 @@
-# Backend README
+# Backend - Mariami Landing Blog
 
-# MERN Landing Blog
+Backend completo para la aplicación de Mariami con funcionalidades de blog, e-commerce y gestión de turnos.
 
-This is the backend for the MERN Landing Blog project, which serves as a blog for a local business. The project is built using the MERN stack (MongoDB, Express, React, Node.js) and will eventually include e-commerce features and a scheduling system.
+## 🚀 Características
 
-## Table of Contents
+- **Autenticación JWT** - Sistema completo de registro y login
+- **Gestión de usuarios** - Roles de usuario y administrador
+- **Blog** - CRUD completo para posts del blog
+- **Productos** - Gestión de productos para e-commerce
+- **Turnos** - Sistema de reserva de citas
+- **Middleware de autenticación** - Protección de rutas
+- **CORS habilitado** - Para comunicación con frontend
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Folder Structure](#folder-structure)
-- [Contributing](#contributing)
-- [License](#license)
+## 📋 Requisitos
 
-## Installation
+- Node.js (v14 o superior)
+- MongoDB Atlas (base de datos en la nube)
+- npm o yarn
 
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd mern-landing-blog/backend
-   ```
+## 🔧 Instalación
 
-2. Install the dependencies:
-   ```
-   npm install
-   ```
-
-3. Set up your environment variables. Create a `.env` file in the `backend` directory and add your MongoDB connection string and any other necessary configurations.
-
-4. Start the server:
-   ```
-   npm start
-   ```
-
-## Usage
-
-The backend server will run on `http://localhost:5000` by default. You can use tools like Postman or Insomnia to test the API endpoints.
-
-## API Endpoints
-
-- **Blog Posts**
-  - `GET /api/posts` - Retrieve all blog posts
-  - `POST /api/posts` - Create a new blog post
-  - `GET /api/posts/:id` - Retrieve a single blog post
-  - `PUT /api/posts/:id` - Update a blog post
-  - `DELETE /api/posts/:id` - Delete a blog post
-
-- **E-commerce Products**
-  - `GET /api/products` - Retrieve all products
-  - `POST /api/products` - Create a new product
-  - `GET /api/products/:id` - Retrieve a single product
-  - `PUT /api/products/:id` - Update a product
-  - `DELETE /api/products/:id` - Delete a product
-
-- **Appointments**
-  - `GET /api/appointments` - Retrieve all appointments
-  - `POST /api/appointments` - Create a new appointment
-  - `GET /api/appointments/:id` - Retrieve a single appointment
-  - `PUT /api/appointments/:id` - Update an appointment
-  - `DELETE /api/appointments/:id` - Delete an appointment
-
-## Folder Structure
-
-```
-backend
-├── src
-│   ├── controllers       # Business logic for routes
-│   ├── models            # Mongoose models
-│   ├── routes            # API endpoints
-│   ├── middleware        # Middleware functions
-│   ├── utils             # Utility functions
-│   └── app.js            # Entry point for the application
-├── package.json          # Backend dependencies
-└── README.md             # Documentation for the backend
+1. **Clonar el repositorio**
+```bash
+cd mern-landing-blog/backend
 ```
 
-## Contributing
+2. **Instalar dependencias**
+```bash
+npm install
+```
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or features.
+3. **Configurar variables de entorno**
+Crear un archivo `.env` en la raíz del backend con:
 
-## License
+```env
+# Configuración del servidor
+PORT=5000
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+# Base de datos MongoDB Atlas
+MONGODB_URI=***REMOVED***://tu_usuario:tu_password@cluster0.mongodb.net/mariami?retryWrites=true&w=majority
+
+# JWT Secret (cambiar por una clave segura)
+JWT_SECRET=tu_jwt_secret_super_seguro_aqui
+
+# Configuración de desarrollo
+NODE_ENV=development
+```
+
+4. **Ejecutar el servidor**
+```bash
+# Desarrollo (con nodemon)
+npm run dev
+
+# Producción
+npm start
+```
+
+## 📚 API Endpoints
+
+### Autenticación
+- `POST /api/users/register` - Registrar usuario
+- `POST /api/users/login` - Login de usuario
+- `GET /api/users/profile` - Obtener perfil (protegido)
+- `PUT /api/users/profile` - Actualizar perfil (protegido)
+
+### Blog
+- `GET /api/blog` - Obtener todos los posts
+- `GET /api/blog/:id` - Obtener post por ID
+- `POST /api/blog` - Crear post (protegido)
+- `PUT /api/blog/:id` - Actualizar post (protegido)
+- `DELETE /api/blog/:id` - Eliminar post (protegido)
+
+### Productos
+- `GET /api/products` - Obtener todos los productos
+- `GET /api/products/:id` - Obtener producto por ID
+- `POST /api/products` - Crear producto (protegido)
+- `PUT /api/products/:id` - Actualizar producto (protegido)
+- `DELETE /api/products/:id` - Eliminar producto (protegido)
+
+### Turnos
+- `GET /api/appointments` - Obtener todos los turnos
+- `POST /api/appointments` - Crear turno
+- `PUT /api/appointments/:id` - Actualizar turno (protegido)
+- `DELETE /api/appointments/:id` - Eliminar turno (protegido)
+
+## 🔐 Autenticación
+
+Para acceder a rutas protegidas, incluir el header:
+```
+Authorization: Bearer <token_jwt>
+```
+
+## 📁 Estructura del Proyecto
+
+```
+backend/
+├── src/
+│   ├── controllers/
+│   │   ├── blogController.js
+│   │   ├── userController.js
+│   │   ├── productController.js
+│   │   └── appointmentController.js
+│   ├── models/
+│   │   ├── BlogPost.js
+│   │   ├── User.js
+│   │   ├── Product.js
+│   │   └── Appointment.js
+│   ├── routes/
+│   │   ├── blog.js
+│   │   ├── user.js
+│   │   ├── product.js
+│   │   └── appointment.js
+│   ├── middleware/
+│   │   └── auth.js
+│   └── app.js
+├── package.json
+└── server.js
+```
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Express.js** - Framework web
+- **MongoDB** - Base de datos
+- **Mongoose** - ODM para MongoDB
+- **JWT** - Autenticación
+- **bcryptjs** - Encriptación de contraseñas
+- **CORS** - Cross-Origin Resource Sharing
+- **dotenv** - Variables de entorno
+
+## 🔧 Scripts Disponibles
+
+- `npm run dev` - Ejecutar en modo desarrollo con nodemon
+- `npm start` - Ejecutar en modo producción
+- `npm test` - Ejecutar tests (pendiente de implementar)
+
+## 📝 Notas Importantes
+
+1. **Base de datos**: Asegúrate de tener una cuenta en MongoDB Atlas y configurar la URI correctamente
+2. **JWT Secret**: Cambia el JWT_SECRET por una clave segura en producción
+3. **CORS**: Configurado para permitir comunicación con el frontend
+4. **Validación**: Implementar validación de datos con Joi o express-validator para producción
+
+## 🚀 Próximos Pasos
+
+- [ ] Implementar validación de datos
+- [ ] Agregar tests unitarios
+- [ ] Implementar rate limiting
+- [ ] Agregar logging
+- [ ] Configurar para producción
