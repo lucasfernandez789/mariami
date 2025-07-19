@@ -1,18 +1,29 @@
-import dynamic from 'next/dynamic';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-// Importar componentes de manera dinámica para evitar problemas de hidratación
-const Navbar = dynamic(() => import('../components/layout/Navbar'), {
-  ssr: true,
-  loading: () => <div className="h-16 bg-white shadow-sm"></div>
-});
-
-const Footer = dynamic(() => import('../components/layout/Footer'), {
-  ssr: true,
-  loading: () => <div className="h-32 bg-gray-900"></div>
-});
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

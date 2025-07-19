@@ -1,25 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
-
-// Importar componentes de manera dinámica
-const Navbar = dynamic(() => import('../../components/layout/Navbar'), {
-  ssr: true,
-  loading: () => <div className="h-16 bg-white shadow-sm"></div>
-});
-
-const Footer = dynamic(() => import('../../components/layout/Footer'), {
-  ssr: true,
-  loading: () => <div className="h-32 bg-gray-900"></div>
-});
+import Navbar from '../../components/layout/Navbar';
+import Footer from '../../components/layout/Footer';
+import { blogAPI } from '../../lib/api';
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [mounted, setMounted] = useState(false);
 
   const categorias = [
     { id: 'todos', name: 'Todos' },
@@ -31,14 +23,11 @@ export default function BlogPage() {
 
   // Cargar posts del backend
   useEffect(() => {
+    setMounted(true);
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/blog');
-        if (!response.ok) {
-          throw new Error('Error al cargar los posts');
-        }
-        const data = await response.json();
+        const data = await blogAPI.getAll();
         setPosts(data);
       } catch (err) {
         console.error('Error fetching posts:', err);
@@ -64,6 +53,21 @@ export default function BlogPage() {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('es-ES', options);
   };
+
+  // Evitar hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -126,11 +130,11 @@ export default function BlogPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {postsDestacados.map((post) => (
-                <div
-                  key={post._id}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
-                >
+                          {postsDestacados.map((post, index) => (
+              <div
+                key={post._id || `post-${index}`}
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
+              >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="text-4xl">🌸</div>
@@ -184,9 +188,9 @@ export default function BlogPage() {
             
             {/* Filtros */}
             <div className="flex flex-wrap justify-center gap-4">
-              {categorias.map((categoria) => (
+              {categorias.map((categoria, index) => (
                 <button
-                  key={categoria.id}
+                  key={categoria.id || `categoria-${index}`}
                   onClick={() => setSelectedCategory(categoria.id)}
                   className={`px-6 py-2 rounded-full font-medium transition-colors duration-200 ${
                     selectedCategory === categoria.id
@@ -203,11 +207,11 @@ export default function BlogPage() {
           {/* Grid de Artículos */}
           {postsFiltrados.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {postsFiltrados.map((post) => (
-                <div
-                  key={post._id}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
-                >
+                          {postsFiltrados.map((post, index) => (
+              <div
+                key={post._id || `post-${index}`}
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
+              >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="text-3xl">🌸</div>

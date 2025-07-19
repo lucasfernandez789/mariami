@@ -2,18 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-// Importar componentes de manera dinámica
-const Navbar = dynamic(() => import('../../../components/layout/Navbar'), {
-  ssr: true,
-  loading: () => <div className="h-16 bg-white shadow-sm"></div>
-});
-
-const Footer = dynamic(() => import('../../../components/layout/Footer'), {
-  ssr: true,
-  loading: () => <div className="h-32 bg-gray-900"></div>
-});
+import Navbar from '../../../components/layout/Navbar';
+import Footer from '../../../components/layout/Footer';
 
 export default function BlogPostPage() {
   const params = useParams();

@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
+import { productsAPI } from '../../lib/api';
 
 export default function ProductosPage() {
   const [selectedCategory, setSelectedCategory] = useState('todos');
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [mounted, setMounted] = useState(false);
 
   const categorias = [
     { id: 'todos', name: 'Todos' },
@@ -15,80 +20,74 @@ export default function ProductosPage() {
     { id: 'maquillaje', name: 'Maquillaje' }
   ];
 
-  const productos = [
-    {
-      id: 1,
-      nombre: 'Crema Hidratante Facial',
-      descripcion: 'Hidratación profunda 24 horas con ácido hialurónico',
-      precio: 45.00,
-      precioOriginal: 60.00,
-      categoria: 'facial',
-      imagen: '🌸',
-      stock: 15,
-      destacado: true
-    },
-    {
-      id: 2,
-      nombre: 'Serum Anti-Aging',
-      descripcion: 'Rejuvenecimiento con vitamina C y retinol',
-      precio: 75.00,
-      precioOriginal: 90.00,
-      categoria: 'facial',
-      imagen: '✨',
-      stock: 8,
-      destacado: true
-    },
-    {
-      id: 3,
-      nombre: 'Aceite Corporal Nutritivo',
-      descripcion: 'Nutrición profunda para piel seca y sensible',
-      precio: 35.00,
-      precioOriginal: 45.00,
-      categoria: 'corporal',
-      imagen: '💧',
-      stock: 12,
-      destacado: false
-    },
-    {
-      id: 4,
-      nombre: 'Shampoo Profesional',
-      descripcion: 'Limpieza suave y reparación del cabello',
-      precio: 28.00,
-      precioOriginal: 35.00,
-      categoria: 'cabello',
-      imagen: '🧴',
-      stock: 20,
-      destacado: false
-    },
-    {
-      id: 5,
-      nombre: 'Base de Maquillaje',
-      descripcion: 'Cobertura natural y larga duración',
-      precio: 55.00,
-      precioOriginal: 70.00,
-      categoria: 'maquillaje',
-      imagen: '💄',
-      stock: 10,
-      destacado: true
-    },
-    {
-      id: 6,
-      nombre: 'Mascarilla Facial',
-      descripcion: 'Purificación y exfoliación suave',
-      precio: 25.00,
-      precioOriginal: 30.00,
-      categoria: 'facial',
-      imagen: '🧖‍♀️',
-      stock: 18,
-      destacado: false
-    }
-  ];
+  // Cargar productos del backend
+  useEffect(() => {
+    setMounted(true);
+    const fetchProductos = async () => {
+      try {
+        setLoading(true);
+        const data = await productsAPI.getAll();
+        setProductos(data);
+      } catch (err) {
+        console.error('Error fetching productos:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductos();
+  }, []);
 
   const productosFiltrados = selectedCategory === 'todos' 
     ? productos 
     : productos.filter(producto => producto.categoria === selectedCategory);
 
-  const productosDestacados = productos.filter(producto => producto.destacado);
+  // Mostrar los primeros 3 productos como destacados (temporal)
+  const productosDestacados = productos.slice(0, 3);
+
+  // Evitar hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando productos...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Error: {error}</p>
+            <p className="text-gray-600">Asegúrate de que el backend esté corriendo en http://localhost:5000</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -122,43 +121,30 @@ export default function ProductosPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {productosDestacados.map((producto) => (
+            {productosDestacados.map((producto, index) => (
               <div
-                key={producto.id}
+                key={producto._id || `producto-${index}`}
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
               >
                 <div className="p-6">
                   <div className="text-center mb-4">
-                    <div className="text-6xl mb-4">{producto.imagen}</div>
-                    {producto.precioOriginal > producto.precio && (
-                      <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
-                        -{Math.round(((producto.precioOriginal - producto.precio) / producto.precioOriginal) * 100)}%
-                      </span>
-                    )}
+                    <div className="text-6xl mb-4">🌸</div>
                   </div>
                   
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {producto.nombre}
+                    {producto.name}
                   </h3>
                   
                   <p className="text-gray-600 mb-4">
-                    {producto.descripcion}
+                    {producto.description}
                   </p>
                   
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <span className="text-2xl font-bold text-pink-500">
-                        ${producto.precio}
+                        ${producto.price}
                       </span>
-                      {producto.precioOriginal > producto.precio && (
-                        <span className="text-gray-400 line-through ml-2">
-                          ${producto.precioOriginal}
-                        </span>
-                      )}
                     </div>
-                    <span className="text-sm text-gray-500">
-                      Stock: {producto.stock}
-                    </span>
                   </div>
                   
                   <button className="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200">
@@ -184,9 +170,9 @@ export default function ProductosPage() {
             
             {/* Filtros */}
             <div className="flex flex-wrap justify-center gap-4">
-              {categorias.map((categoria) => (
+              {categorias.map((categoria, index) => (
                 <button
-                  key={categoria.id}
+                  key={categoria.id || `categoria-${index}`}
                   onClick={() => setSelectedCategory(categoria.id)}
                   className={`px-6 py-2 rounded-full font-medium transition-colors duration-200 ${
                     selectedCategory === categoria.id
@@ -202,43 +188,30 @@ export default function ProductosPage() {
           
           {/* Grid de Productos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {productosFiltrados.map((producto) => (
+            {productosFiltrados.map((producto, index) => (
               <div
-                key={producto.id}
+                key={producto._id || `producto-${index}`}
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
               >
                 <div className="p-6">
                   <div className="text-center mb-4">
-                    <div className="text-5xl mb-2">{producto.imagen}</div>
-                    {producto.precioOriginal > producto.precio && (
-                      <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
-                        Oferta
-                      </span>
-                    )}
+                    <div className="text-5xl mb-2">🌸</div>
                   </div>
                   
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {producto.nombre}
+                    {producto.name}
                   </h3>
                   
                   <p className="text-gray-600 text-sm mb-4">
-                    {producto.descripcion}
+                    {producto.description}
                   </p>
                   
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <span className="text-xl font-bold text-pink-500">
-                        ${producto.precio}
+                        ${producto.price}
                       </span>
-                      {producto.precioOriginal > producto.precio && (
-                        <span className="text-gray-400 line-through ml-2 text-sm">
-                          ${producto.precioOriginal}
-                        </span>
-                      )}
                     </div>
-                    <span className="text-xs text-gray-500">
-                      {producto.stock} disponibles
-                    </span>
                   </div>
                   
                   <button className="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200">

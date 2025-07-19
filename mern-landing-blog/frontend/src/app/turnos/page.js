@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
+import { appointmentsAPI } from '../../lib/api';
 
 export default function TurnosPage() {
   const [formData, setFormData] = useState({
@@ -44,37 +45,31 @@ export default function TurnosPage() {
     setIsSubmitting(true);
 
     try {
-      // Aquí iría la llamada a tu API
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user: formData.email, // Por ahora usamos email como ID de usuario
-          date: new Date(`${formData.fecha}T${formData.horario}`),
-          service: formData.servicio,
-          // Agregar más datos según tu modelo
-        }),
-      });
+      // Llamada a nuestro backend usando la API helper
+      const appointmentData = {
+        name: formData.nombre,
+        email: formData.email,
+        phone: formData.telefono,
+        date: formData.fecha,
+        time: formData.horario,
+        service: formData.servicio
+      };
 
-      if (response.ok) {
-        setSubmitSuccess(true);
-        setFormData({
-          nombre: '',
-          email: '',
-          telefono: '',
-          servicio: '',
-          fecha: '',
-          horario: '',
-          mensaje: ''
-        });
-      } else {
-        throw new Error('Error al enviar el formulario');
-      }
+      await appointmentsAPI.create(appointmentData);
+      
+      setSubmitSuccess(true);
+      setFormData({
+        nombre: '',
+        email: '',
+        telefono: '',
+        servicio: '',
+        fecha: '',
+        horario: '',
+        mensaje: ''
+      });
     } catch (error) {
       console.error('Error:', error);
-      alert('Hubo un error al enviar el formulario. Por favor, intenta nuevamente.');
+      alert(`Error al enviar el formulario: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
