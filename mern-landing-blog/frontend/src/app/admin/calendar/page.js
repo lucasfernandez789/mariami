@@ -80,8 +80,16 @@ export default function AdminCalendar() {
     });
   };
 
-  const getStatusColor = (date) => {
-    const appointmentDate = new Date(date);
+  const getStatusColor = (appointment) => {
+    // Si el appointment tiene un status específico, usarlo
+    if (appointment.status === 'confirmed') {
+      return 'bg-green-100 text-green-800';
+    } else if (appointment.status === 'cancelled') {
+      return 'bg-red-100 text-red-800';
+    }
+    
+    // Si no tiene status, usar la lógica de fecha
+    const appointmentDate = new Date(appointment.date);
     const now = new Date();
     
     if (appointmentDate < now) {
@@ -89,12 +97,20 @@ export default function AdminCalendar() {
     } else if (appointmentDate.toDateString() === now.toDateString()) {
       return 'bg-yellow-100 text-yellow-800'; // Hoy
     } else {
-      return 'bg-green-100 text-green-800'; // Futuro
+      return 'bg-blue-100 text-blue-800'; // Futuro
     }
   };
 
-  const getStatusText = (date) => {
-    const appointmentDate = new Date(date);
+  const getStatusText = (appointment) => {
+    // Si el appointment tiene un status específico, usarlo
+    if (appointment.status === 'confirmed') {
+      return 'Confirmado';
+    } else if (appointment.status === 'cancelled') {
+      return 'Cancelado';
+    }
+    
+    // Si no tiene status, usar la lógica de fecha
+    const appointmentDate = new Date(appointment.date);
     const now = new Date();
     
     if (appointmentDate < now) {
@@ -124,16 +140,46 @@ export default function AdminCalendar() {
     );
   };
 
-  const handleConfirmAppointment = (appointmentId) => {
-    // Aquí iría la lógica para confirmar el turno
-    console.log('Confirmando turno:', appointmentId);
-    alert('Función de confirmación en desarrollo');
+  const handleConfirmAppointment = async (appointmentId) => {
+    try {
+      console.log('✅ Confirmando turno:', appointmentId);
+      
+      await appointmentsAPI.confirm(appointmentId);
+      
+      // Recargar los turnos para actualizar la vista
+      await fetchAppointments();
+      
+      // Mostrar mensaje de éxito
+      alert('✅ Turno confirmado exitosamente');
+      
+      // Cerrar el modal
+      setShowModal(false);
+      
+    } catch (error) {
+      console.error('❌ Error confirmando turno:', error);
+      alert('❌ Error al confirmar el turno: ' + error.message);
+    }
   };
 
-  const handleCancelAppointment = (appointmentId) => {
-    // Aquí iría la lógica para cancelar el turno
-    console.log('Cancelando turno:', appointmentId);
-    alert('Función de cancelación en desarrollo');
+  const handleCancelAppointment = async (appointmentId) => {
+    try {
+      console.log('❌ Cancelando turno:', appointmentId);
+      
+      await appointmentsAPI.cancel(appointmentId);
+      
+      // Recargar los turnos para actualizar la vista
+      await fetchAppointments();
+      
+      // Mostrar mensaje de éxito
+      alert('❌ Turno cancelado exitosamente');
+      
+      // Cerrar el modal
+      setShowModal(false);
+      
+    } catch (error) {
+      console.error('❌ Error cancelando turno:', error);
+      alert('❌ Error al cancelar el turno: ' + error.message);
+    }
   };
 
   if (loading) {
@@ -333,8 +379,8 @@ export default function AdminCalendar() {
                              )}
                            </div>
                            <div>
-                             <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(appointment.date)}`}>
-                               {getStatusText(appointment.date)}
+                             <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(appointment)}`}>
+                               {getStatusText(appointment)}
                              </span>
                            </div>
                          </div>
@@ -352,17 +398,27 @@ export default function AdminCalendar() {
                      <div className="flex space-x-3 pt-4 border-t border-gray-100">
                        <button
                          onClick={() => handleConfirmAppointment(appointment.id)}
-                         className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center"
+                         disabled={appointment.status === 'confirmed' || appointment.status === 'cancelled'}
+                         className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
+                           appointment.status === 'confirmed' || appointment.status === 'cancelled'
+                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                             : 'bg-green-500 hover:bg-green-600 text-white'
+                         }`}
                        >
                          <span className="mr-2">✅</span>
-                         Confirmar Turno
+                         {appointment.status === 'confirmed' ? 'Confirmado' : 'Confirmar Turno'}
                        </button>
                        <button
                          onClick={() => handleCancelAppointment(appointment.id)}
-                         className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center"
+                         disabled={appointment.status === 'confirmed' || appointment.status === 'cancelled'}
+                         className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
+                           appointment.status === 'confirmed' || appointment.status === 'cancelled'
+                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                             : 'bg-red-500 hover:bg-red-600 text-white'
+                         }`}
                        >
                          <span className="mr-2">❌</span>
-                         Cancelar Turno
+                         {appointment.status === 'cancelled' ? 'Cancelado' : 'Cancelar Turno'}
                        </button>
                      </div>
                    </div>

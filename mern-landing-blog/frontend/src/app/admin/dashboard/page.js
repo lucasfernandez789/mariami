@@ -77,7 +77,7 @@ export default function AdminDashboard() {
       description: 'Crear y editar artículos',
       href: '/admin/blog',
       icon: '✍️',
-      color: 'bg-green-500'
+      color: 'bg-orange-500'
     }
   ];
 
