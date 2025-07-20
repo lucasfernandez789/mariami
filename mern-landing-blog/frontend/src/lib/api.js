@@ -11,6 +11,9 @@ export const API_ENDPOINTS = {
   // Productos
   PRODUCTS: `${API_BASE_URL}/products`,
   
+  // Servicios
+  SERVICES: `${API_BASE_URL}/services`,
+  
   // Usuarios
   USERS: `${API_BASE_URL}/users`,
   LOGIN: `${API_BASE_URL}/users/login`,
@@ -76,6 +79,18 @@ export const appointmentsAPI = {
   delete: (id) => apiRequest(`${API_ENDPOINTS.APPOINTMENTS}/${id}`, {
     method: 'DELETE',
   }),
+  
+  // Confirmar turno
+  confirm: (id) => apiRequest(`${API_ENDPOINTS.APPOINTMENTS}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ status: 'confirmed' }),
+  }),
+  
+  // Cancelar turno
+  cancel: (id) => apiRequest(`${API_ENDPOINTS.APPOINTMENTS}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ status: 'cancelled' }),
+  }),
 };
 
 export const blogAPI = {
@@ -120,29 +135,45 @@ export const productsAPI = {
   getById: (id) => apiRequest(`${API_ENDPOINTS.PRODUCTS}/${id}`),
   
   // Crear producto
-  create: (data, token) => apiRequest(API_ENDPOINTS.PRODUCTS, {
+  create: (data) => apiRequest(API_ENDPOINTS.PRODUCTS, {
     method: 'POST',
     body: JSON.stringify(data),
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
   }),
   
   // Actualizar producto
-  update: (id, data, token) => apiRequest(`${API_ENDPOINTS.PRODUCTS}/${id}`, {
+  update: (id, data) => apiRequest(`${API_ENDPOINTS.PRODUCTS}/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
   }),
   
   // Eliminar producto
-  delete: (id, token) => apiRequest(`${API_ENDPOINTS.PRODUCTS}/${id}`, {
+  delete: (id) => apiRequest(`${API_ENDPOINTS.PRODUCTS}/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
+  }),
+};
+
+export const servicesAPI = {
+  // Obtener todos los servicios
+  getAll: () => apiRequest(API_ENDPOINTS.SERVICES),
+  
+  // Obtener servicio por ID
+  getById: (id) => apiRequest(`${API_ENDPOINTS.SERVICES}/${id}`),
+  
+  // Crear servicio
+  create: (data) => apiRequest(API_ENDPOINTS.SERVICES, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  // Actualizar servicio
+  update: (id, data) => apiRequest(`${API_ENDPOINTS.SERVICES}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  // Eliminar servicio
+  delete: (id) => apiRequest(`${API_ENDPOINTS.SERVICES}/${id}`, {
+    method: 'DELETE',
   }),
 };
 
