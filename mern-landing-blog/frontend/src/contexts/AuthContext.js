@@ -1,51 +1,74 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { onAuthStateChange, getCurrentUser, signInWithGoogle, signOutUser, getUserData } from '../lib/firebase';
 
-const AuthContext = createContext({});
+const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+  }
+  return context;
+};
 
-export const AuthContextProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    setMounted(true);
+    const unsubscribe = onAuthStateChange(async (firebaseUser) => {
+      setLoading(true);
+      
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        
+        // Obtener datos adicionales del usuario desde Firestore
+        try {
+          const data = await getUserData(firebaseUser.uid);
+          setUserData(data);
+        } catch (error) {
+          console.error('Error al obtener datos del usuario:', error);
+        }
+      } else {
+        setUser(null);
+        setUserData(null);
+      }
+      
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
+  const login = async () => {
     try {
-      // Simulación temporal de login
-      console.log('Login con Google (simulado)');
-      setUser({
-        email: '***REMOVED***',
-        name: 'Admin Mariami',
-        role: 'admin'
-      });
+      const result = await signInWithGoogle();
+      return result;
     } catch (error) {
-      console.error('Error al iniciar sesión con Google:', error);
+      console.error('Error en login:', error);
       throw error;
     }
   };
 
   const logout = async () => {
     try {
-      setUser(null);
+      await signOutUser();
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error('Error en logout:', error);
       throw error;
     }
   };
 
   const value = {
     user,
+    userData,
     loading,
-    signInWithGoogle,
+    login,
     logout,
-    isAdmin: user?.email === '***REMOVED***',
-    mounted
+    isAuthenticated: !!user
   };
 
   return (
