@@ -3,7 +3,7 @@
 
 process.env.PORT = 5000;
 // Usar MongoDB Atlas gratuito para testing
-process.env.MONGODB_URI = '***REMOVED***://testuser:testpass123@cluster0.mongodb.net/mariami-test?retryWrites=true&w=majority';
+process.env.MONGODB_URI = 'mongodb+srv://testuser:testpass123@cluster0.mongodb.net/mariami-test?retryWrites=true&w=majority';
 process.env.JWT_SECRET = 'mariami_jwt_secret_test_2024';
 process.env.NODE_ENV = 'development';
 

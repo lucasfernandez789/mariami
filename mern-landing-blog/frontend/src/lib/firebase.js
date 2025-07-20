@@ -5,7 +5,7 @@ import { getStorage } from 'firebase/storage';
 
 // Configuración de Firebase
 const firebaseConfig = {
-  apiKey: "***REMOVED***AhTg5UxeB67436POCs8b8ZvYifG0FN4Eo",
+  apiKey: "AIzaSyAhTg5UxeB67436POCs8b8ZvYifG0FN4Eo",
   authDomain: "mariami-estetica.firebaseapp.com",
   projectId: "mariami-estetica",
   storageBucket: "mariami-estetica.appspot.com",

@@ -28,7 +28,7 @@ export default function AdminLogin() {
 
     try {
       // Simulación de login admin
-      if (formData.email === '***REMOVED***' && formData.password === '***REMOVED***') {
+      if (formData.email === 'admin@mariami.com' && formData.password === 'admin123') {
         // Guardar token en localStorage
         localStorage.setItem('adminToken', 'admin-jwt-token-123');
         localStorage.setItem('adminUser', JSON.stringify({
@@ -40,7 +40,7 @@ export default function AdminLogin() {
         
         router.push('/admin/dashboard');
       } else {
-        setError('Credenciales incorrectas. Usa: ***REMOVED*** / ***REMOVED***');
+        setError('Credenciales incorrectas. Usa: admin@mariami.com / admin123');
       }
     } catch (error) {
       setError('Error al iniciar sesión. Por favor, intenta de nuevo.');
@@ -82,7 +82,7 @@ export default function AdminLogin() {
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200"
-                placeholder="***REMOVED***"
+                placeholder="admin@mariami.com"
               />
             </div>
 
@@ -119,7 +119,7 @@ export default function AdminLogin() {
 
             <div className="text-center">
               <p className="text-sm text-gray-500">
-                Credenciales de prueba: ***REMOVED*** / ***REMOVED***
+                Credenciales de prueba: admin@mariami.com / admin123
               </p>
             </div>
           </form>

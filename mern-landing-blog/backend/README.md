@@ -38,7 +38,7 @@ Crear un archivo `.env` en la raíz del backend con:
 PORT=5000
 
 # Base de datos MongoDB Atlas
-MONGODB_URI=***REMOVED***://tu_usuario:tu_password@cluster0.mongodb.net/mariami?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://tu_usuario:tu_password@cluster0.mongodb.net/mariami?retryWrites=true&w=majority
 
 # JWT Secret (cambiar por una clave segura)
 JWT_SECRET=tu_jwt_secret_super_seguro_aqui
