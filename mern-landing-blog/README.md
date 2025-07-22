@@ -179,8 +179,6 @@ node seed-data.js
 ## 🔒 Autenticación
 
 ### Admin Login
-- **Email:** admin@mariami.com
-- **Password:** admin123
 - **Token:** Se guarda en localStorage
 - **Protección:** Rutas protegidas con middleware
 
