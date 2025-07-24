@@ -1,6 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+  font-family: 'Montserrat', system-ui, sans-serif;
+  background: #fff;
+  color: #181818;
+}
+
+/* Verde oscuro para detalles */
+:root {
+  --verde-mariami: #1B5E20;
+}
+
+/* Hover subrayado animado en verde oscuro */
+.link-underline {
+  position: relative;
+  transition: color 0.2s;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 2px;
+  background: var(--verde-mariami);
+  border-radius: 2px;
+  width: 0;
+  transition: width 0.3s;
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* AOS (Animate On Scroll) fade-in y slide-up */
+[data-aos] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-duration: 0.8s;
+  transition-timing-function: cubic-bezier(0.4,0,0.2,1);
+}
+[data-aos].aos-animate {
+  opacity: 1;
+  transform: none;
+}
+[data-aos="fade-up"] {
+  transform: translateY(40px);
+}
+[data-aos="fade-up"].aos-animate {
+  transform: translateY(0);
+}
 
 /* Estilos personalizados para react-calendar */
 .react-calendar {
@@ -228,6 +277,32 @@
   color: white;
   box-shadow: 0 4px 12px rgba(236, 72, 155, 0.4);
   transform: scale(1.05);
+}
+
+.card-fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.card-fade-up.visible {
+  opacity: 1;
+  transform: none;
+}
+.card-fade-up:hover {
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.12);
+  transform: translateY(-8px) scale(1.03);
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 60%, #d1d5db 100%);
+}
+
+.section-gradient {
+  background: linear-gradient(135deg, #18181b 0%, #23272f 60%, #3a3a3a 100%);
+}
+
+.section-gradient-light {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 60%, #fff 100%);
 }
 
 /* Responsive */
